@@ -83,21 +83,28 @@ class IntermediaryStudentCourse():
             course_students.append(students)
         return jsonify(course_students)
 
-    # def get_course_students(course_id):
-    #     course = IntermediaryStudentCourse.get_course_by_ID(course_id)
-    #     course_students = []
-    #     for student in course:
-    #         user = IntermediaryUser.get_user_by_ID(student['student_id'])
-    #         students = {}
-    #         students['name'] = user.name
-    #         students['lastname'] = user.lastname
-    #         students['dni'] = user.dni
-    #         course_students.append(students)
-    #     return jsonify(course_students)
+    def get_course_students_by_ID(course_id, instance_type):
+        course = IntermediaryStudentCourse.get_course_by_ID(course_id)
+        course_students = []
+        for student in course:
+            user = IntermediaryUser.get_user_by_ID(student['student_id'])
+            students = {}
+            students['name'] = user.name
+            students['lastname'] = user.lastname
+            students['dni'] = user.dni
+            # instance_type 0 = cursada
+            if instance_type == 0:
+                students['note_first'] = ""
+                students['note_second'] = ""
+            elif instance_type == 1:
+                students['note'] = ""
+            course_students.append(students)
+        return course_students
 
-    # def course_students_to_excel():
-    #     course_id = request.json['course_id']
-    #     course_students = IntermediaryStudentCourse.get_course_students(course_id)
-    #     df = pd.DataFrame(course_students)
-    #     df.to_excel('./files/students/students.xlsx')
-    #     return 'ok'
+    def course_students_to_excel():
+        course_id = request.json['course_id']
+        instance_type = request.json['instance_type']
+        course_students = IntermediaryStudentCourse.get_course_students_by_ID(course_id, instance_type)
+        df = pd.DataFrame(course_students)
+        df.to_excel(r"E:\Backup\Backup\UNLA\4ano\distribuidos\tp3\teacher-rest\files\students.xlsx")
+        return 'ok'
